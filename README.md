@@ -1,4 +1,3 @@
-![Banner](./public/banner.png)
 
 # React Profesional: Arquitectura Antes del Framework
 
