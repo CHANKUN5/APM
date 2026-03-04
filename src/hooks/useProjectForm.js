@@ -1,70 +1,60 @@
-import { useState } from "react";
 import { apiCreateProject } from "../services/api";
+import { useForm } from "./useForm";
 
 export function useProjectForm(token, onProjectCreated, setSelectedId) {
-    const [name, setName] = useState("");
-    const [owner, setOwner] = useState("");
-    const [budget, setBudget] = useState("0");
-    const [status, setStatus] = useState("active");
-    const [saving, setSaving] = useState(false);
-    const [formErr, setFormErr] = useState(null);
-
-    const nameErr = name && name.trim().length < 3 ? "Minimo 3 caracteres" : null;
-    const ownerErr = owner && owner.trim().length < 2 ? "Owner muy corto" : null;
-    const budgetErr = isNaN(Number(budget)) ? "Debe ser numero" : null;
-
-    async function onCreate(e) {
-        e.preventDefault();
-        setFormErr(null);
-
-        if (!name || name.trim().length < 3) {
-            setFormErr("Revisa el nombre del proyecto");
-            return;
+    const validate = (values) => {
+        const errs = {};
+        if (values.name !== undefined) {
+            errs.name = values.name.trim().length < 3 ? "Minimo 3 caracteres" : null;
         }
-        if (!owner || owner.trim().length < 2) {
-            setFormErr("Revisa el owner");
-            return;
+        if (values.owner !== undefined) {
+            errs.owner = values.owner.trim().length < 2 ? "Owner muy corto" : null;
         }
-        if (isNaN(Number(budget))) {
-            setFormErr("Budget inválido");
-            return;
+        if (values.budget !== undefined) {
+            errs.budget = isNaN(Number(values.budget)) ? "Debe ser numero" : null;
         }
+        return errs;
+    };
 
-        setSaving(true);
-        try {
-            const created = await apiCreateProject({
-                token,
-                payload: { name, owner, budget: Number(budget), status },
-            });
+    const {
+        values,
+        errors,
+        isSubmitting: saving,
+        onChange,
+        onSubmit,
+        reset
+    } = useForm({ name: "", owner: "", budget: "0", status: "active" }, validate);
 
-            onProjectCreated(created);
-            setSelectedId(created.id);
+    const handleCreate = async (formValues) => {
+        const created = await apiCreateProject({
+            token,
+            payload: {
+                name: formValues.name,
+                owner: formValues.owner,
+                budget: Number(formValues.budget),
+                status: formValues.status
+            },
+        });
 
-            setName("");
-            setOwner("");
-            setBudget("0");
-            setStatus("active");
-        } catch (e) {
-            setFormErr(`${e.status || ""} ${e.message || "Error creando"}`.trim());
-        } finally {
-            setSaving(false);
-        }
-    }
+        onProjectCreated(created);
+        setSelectedId(created.id);
+        reset();
+    };
 
     return {
-        name,
-        setName,
-        owner,
-        setOwner,
-        budget,
-        setBudget,
-        status,
-        setStatus,
+        name: values.name,
+        setName: (val) => onChange("name", val),
+        owner: values.owner,
+        setOwner: (val) => onChange("owner", val),
+        budget: values.budget,
+        setBudget: (val) => onChange("budget", val),
+        status: values.status,
+        setStatus: (val) => onChange("status", val),
         saving,
-        formErr,
-        nameErr,
-        ownerErr,
-        budgetErr,
-        onCreate,
+        formErr: Object.values(errors).find(e => e !== null) || null,
+        nameErr: errors.name,
+        ownerErr: errors.owner,
+        budgetErr: errors.budget,
+        onCreate: (e) => onSubmit(e, handleCreate),
     };
 }

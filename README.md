@@ -1,12 +1,31 @@
 
-# React Profesional: Arquitectura Antes del Framework
+# 🏢 APM Enterprise: Dashboard Management System
 
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/TR/CSS/)
 
-Este proyecto es el resultado del **Día 1 — React Arquitectura Profesional**. Se ha refactorizado una aplicación desordenada ("todo-en-uno") hacia una estructura escalable y mantenible, siguiendo los principios de separación de responsabilidades.
+## 📝 Resumen del Proyecto
+Este es un sistema de gestión empresarial diseñado para **APM Enterprise**, enfocado en la administración eficiente de proyectos y métricas de rendimiento (KPIs). El objetivo principal es migrar sistemas heredados hacia una arquitectura moderna basada en React, garantizando la escalabilidad, el mantenimiento preventivo y una experiencia de usuario premium.
+
+Estamos trabajando bajo un esquema de **Arquitectura Profesional**, separando estrictamente las responsabilidades para evitar el código espagueti y asegurar que el sistema pueda crecer junto con las necesidades de la empresa.
+
+---
+
+## 📈 Bitácora de Desarrollo Diaria
+
+### 📅 Día 1 — Arquitectura Base
+*   **Enfoque:** Separación de responsabilidades y limpieza de código.
+*   **Logros:** Refactorización de un "monolito" de archivo único hacia una estructura de carpetas estándar (`services`, `hooks`, `components`, `utils`).
+*   [Ver Auditoría Día 1](#audit-dia-1)
+
+### 📅 Día 2 — Custom Hooks Profesionales (En curso)
+*   **Enfoque:** Abstracción de lógica y creación de hooks genéricos de producción.
+*   **Logros:** Implementación de `useFetch`, `useForm` y `useToggle` con manejo de estados de carga, errores y limpieza de memoria.
+*   [Ver Auditoría Día 2](#audit-dia-2)
+
+---
 
 ## 🚀 Proceso de Refactorización Paso a Paso
 
@@ -75,6 +94,7 @@ src/
 └── App.jsx     # Punto de entrada de la aplicación.
 ```
 
+<a name="audit-dia-1"></a>
 ## 📝 Auditoría React (Día 1)
 
 A continuación, se responden las preguntas planteadas en la actividad de auditoría:
@@ -99,4 +119,21 @@ Un componente con `fetch` directo está **acoplado** a una implementación de da
 
 ---
 
-*Proyecto desarrollado como parte de la Actividad 1 del curso React Profesional.*
+<a name="audit-dia-2"></a>
+## 🧪 Auditoría React (Día 2)
+
+### 1. ¿Qué problema resuelve un custom hook?
+Resuelven la **duplicación de lógica de estado y efectos**. Permiten extraer la lógica compleja de los componentes para que estos se enfoquen solo en la interfaz de usuario, facilitando la reutilización en múltiples partes de la empresa y simplificando las pruebas unitarias.
+
+### 2. ¿Cuándo NO se debe usar un hook?
+No se deben usar cuando la lógica es puramente algorítmica y no depende del ciclo de vida o del estado de React. Si es una función que solo transforma datos, debe vivir en `src/utils/` como un helper. Tampoco deben usarse para lógica que no será reutilizada y que es simple de mantener dentro del componente.
+
+### 3. ¿Qué pasa si el hook depende de props cambiantes?
+El hook debe incluir esas props en los arreglos de dependencias de sus propios hooks internos (`useEffect`, `useCallback`, `useMemo`). Esto asegura que el hook se sincronice correctamente y reaccione a los cambios de configuración externa, manteniendo la consistencia de los datos.
+
+### 4. ¿Dónde está el riesgo de memory leak?
+El riesgo principal está en los **efectos secundarios asíncronos** (peticiones API, suscripciones, temporizadores) que no se limpian cuando el componente se desmonta. Por ello, en nuestro `useFetch` implementamos un `AbortController` para cancelar cualquier petición pendiente y evitar que el estado intente actualizarse en un componente que ya no existe.
+
+---
+
+*Proyecto desarrollado como parte del curso React Profesional para APM Enterprise.*

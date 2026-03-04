@@ -1,18 +1,24 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { apiGetDashboard, apiToggleProjectStatus } from "../services/api";
+import { useFetch } from "./useFetch";
 
 export function useDashboard() {
     const [token, setToken] = useState("demo-token");
     const [email, setEmail] = useState("admin@demo.com");
     const [pass, setPass] = useState("123456");
 
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [err, setErr] = useState(null);
-
     const [q, setQ] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [selectedId, setSelectedId] = useState(null);
+
+    const {
+        data,
+        loading,
+        error: err,
+        execute: load,
+        setData,
+        setError: setErr
+    } = useFetch(() => apiGetDashboard({ token }), !!token, [token]);
 
     const filteredProjects = useMemo(() => {
         const items = data?.projects || [];
@@ -25,29 +31,6 @@ export function useDashboard() {
         if (!data?.projects || !selectedId) return null;
         return data.projects.find((p) => p.id === selectedId) || null;
     }, [data, selectedId]);
-
-    async function load() {
-        setLoading(true);
-        setErr(null);
-        try {
-            const res = await apiGetDashboard({ token });
-            setData(res);
-            if (!selectedId && res.projects?.[0]?.id) setSelectedId(res.projects[0].id);
-        } catch (e) {
-            setErr({ message: e.message || "Error", status: e.status || 0 });
-            setData(null);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        if (token) {
-            load();
-        } else {
-            setData(null);
-        }
-    }, [token]);
 
     async function onToggleStatus(id) {
         try {
