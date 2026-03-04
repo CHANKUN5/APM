@@ -13,17 +13,27 @@ Estamos trabajando bajo un esquema de **Arquitectura Profesional**, separando es
 
 ---
 
-## 📈 Bitácora de Desarrollo Diaria
+## 📈 Bitácora de Desarrollo: Día 1 — React Arquitectura Profesional
 
-### 📅 Día 1 — Arquitectura Base
-*   **Enfoque:** Separación de responsabilidades y limpieza de código.
-*   **Logros:** Refactorización de un "monolito" de archivo único hacia una estructura de carpetas estándar (`services`, `hooks`, `components`, `utils`).
-*   [Ver Auditoría Día 1](#audit-dia-1)
+Este día se centra en asegurar las bases de React, entendiendo que la arquitectura y la separación de responsabilidades son la clave para un código escalable.
 
-### 📅 Día 2 — Custom Hooks Profesionales (En curso)
-*   **Enfoque:** Abstracción de lógica y creación de hooks genéricos de producción.
-*   **Logros:** Implementación de `useFetch`, `useForm` y `useToggle` con manejo de estados de carga, errores y limpieza de memoria.
-*   [Ver Auditoría Día 2](#audit-dia-2)
+### [📦 Actividad 1: Auditoría y Refactorización](./docs/ACTIVIDAD_1.md)
+*   **Enfoque:** Separación de responsabilidades.
+*   **Logros:** Migración de un monolito a una estructura modular (`services`, `hooks`, `components`, `utils`).
+*   [Ver Auditoría Actividad 1](#audit-dia-1)
+
+### [🎣 Actividad 2: Custom Hooks Profesionales](./docs/ACTIVIDAD_2.md)
+*   **Enfoque:** Abstracción de lógica y limpieza de componentes.
+*   **Logros:** Implementación de `useFetch`, `useForm` y `useToggle` genéricos con manejo de estados y limpieza de memoria.
+*   [Ver Auditoría Actividad 2](#audit-dia-2)
+
+### [📡 Actividad 3: Integración con API Profesional](./docs/ACTIVIDAD_3.md)
+*   **Enfoque:** Cliente HTTP centralizado y manejo de errores reales.
+*   **Logros:** Creación de `httpClient.js` y `mockServer.js` para interceptación de `fetch`, simulando un backend empresarial con estados 401, 404 y 500.
+
+### [🤝 Actividad 4: Pair Programming & Refactor Final](./docs/ACTIVIDAD_4.md)
+*   **Enfoque:** Revisión de calidad de código y eliminación de acoplamiento.
+*   **Logros:** Auditoría completa de arquitectura ("Navigator"), asegurando que la lógica esté 100% aislada en hooks y los servicios sean totalmente independientes de la UI.
 
 ---
 
