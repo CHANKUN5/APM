@@ -22,7 +22,7 @@ export function useFetch(fetchFn, autoExecute = true, deps = []) {
             setData(result);
             return result;
         } catch (err) {
-            if (err.name === 'AbortError') return;
+            if (err.name === "AbortError") return;
             setError({ message: err.message || "Error", status: err.status || 0 });
             throw err;
         } finally {
