@@ -6,58 +6,92 @@
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/TR/CSS/)
 
 ## 📝 Resumen del Proyecto
-Este es un sistema de gestión empresarial diseñado para **APM Enterprise**, enfocado en la administración eficiente de proyectos y métricas de rendimiento (KPIs). El sistema utiliza una **Arquitectura Profesional** de capas, garantizando escalabilidad y mantenimiento preventivo.
+Sistema de gestión empresarial de alto rendimiento diseñado para **APM Enterprise**. Este proyecto demuestra la transición de una aplicación legada hacia una **Arquitectura de Software Profesional**, priorizando la escalabilidad, el mantenimiento predictivo y el desacoplamiento total de responsabilidades.
 
 ---
 
-## 📈 Bitácora de Desarrollo: Día 1 — React Arquitectura Profesional
+## 🏗️ Arquitectura de Capas Profesionales
 
-A continuación, se detallan las actividades del Día 1. Haz clic en cada una para ver el informe detallado y la auditoría correspondiente:
+Para asegurar la calidad empresarial, el sistema está dividido en 4 capas de responsabilidad única:
 
-### 🗂️ Índice de Actividades
-1.  **[📦 Actividad 1: Auditoría y Refactorización](./docs/ACTIVIDAD_1.md)**
-    *   Migración de monolito a estructura modular.
-    *   Auditoría de responsabilidades.
-2.  **[🎣 Actividad 2: Custom Hooks Profesionales](./docs/ACTIVIDAD_2.md)**
-    *   Abstracción de lógica con `useFetch`, `useForm` y `useToggle`.
-    *   Auditoría de estados y efectos.
-3.  **[📡 Actividad 3: Integración con API Profesional](./docs/ACTIVIDAD_3.md)**
-    *   Cliente HTTP centralizado y Servidor Mock.
-    *   Manejo de estados de carga y errores HTTP.
-4.  **[🤝 Actividad 4: Pair Programming & Refactor Final](./docs/ACTIVIDAD_4.md)**
-    *   Auditoría de calidad ("Navigator").
-    *   Desacoplamiento total y optimización.
-
----
-
-## 🏗️ Mapa de Arquitectura y Flujo
-
-### Proceso de Refactorización
 ```mermaid
 graph TD
-    A[1. Análisis Monolito] -->|Extracción| B[2. Capa de Servicios]
-    B -->|Encapsulamiento| C[3. Custom Hooks]
-    C -->|Atomización| D[4. Componentes UI]
-    D -->|Optimización| E[5. Auditoría Final]
-```
+    subgraph UI_Layer["🎨 Capa de Presentación (UI)"]
+        Components["src/components/ (Botones, Inputs, Cards)"]
+        Pages["src/pages/ (Layouts de Dashboard)"]
+    end
 
-### Tabla de Responsabilidades
-| Capa | Ubicación | Responsabilidad |
-| :--- | :--- | :--- |
-| **UI** | `src/components/` | Solo presentación y estilos puros. |
-| **Logic** | `src/hooks/` | Gestión de estado y reglas de negocio. |
-| **Services** | `src/services/` | Comunicación con API y manejo de datos. |
-| **Utils** | `src/utils/` | Funciones auxiliares genéricas. |
+    subgraph Logic_Layer["🧠 Capa de Lógica (Hooks)"]
+        PHooks["src/hooks/ (useFetch, useForm, useToggle)"]
+        BHooks["src/hooks/ (useDashboard, useProjectForm)"]
+    end
 
-### Diagrama de Flujo de Datos
-```mermaid
-graph LR
-    View[DashboardPage] --> Hook[Custom Hooks]
-    Hook --> Client[HTTP Client]
-    Client --> Mock[Mock Server]
-    Mock --> Response[API Response]
+    subgraph Service_Layer["📡 Capa de Servicios (API)"]
+        HTTPClient["src/services/httpClient.js (Base Cliente)"]
+        APIService["src/services/api.js (Endpoints)"]
+        MockServer["src/services/mockServer.js (Interceptor)"]
+    end
+
+    subgraph Utils_Layer["🛠️ Capa de Utilidades"]
+        Fmt["src/utils/formatters.js (Dinero, Fechas)"]
+    end
+
+    UI_Layer --> Logic_Layer
+    Logic_Layer --> Service_Layer
+    Logic_Layer --> Utils_Layer
 ```
 
 ---
 
-*Proyecto desarrollado como parte del curso React Profesional para APM Enterprise.*
+## 📈 Bitácora de Desarrollo Diaria
+
+### 📅 Día 1: Arquitectura y Refactorización Base
+Este día se centró en "limpiar la casa". El código desordenado fue fragmentado en sub-actividades de alta especialización:
+
+*   **[📦 Actividad 1.1: Modularización UI](./docs/ACTIVIDAD_1_1.md)**: Extracción de componentes atómicos para crear una librería de diseño interna.
+*   **[📡 Actividad 1.2: Aislamiento de Servicios](./docs/ACTIVIDAD_1_2.md)**: Centralización de llamadas a la API en una capa independiente.
+*   **[🛠️ Actividad 1.3: Abstracción Funcional](./docs/ACTIVIDAD_1_3.md)**: Creación de formateadores globales para consistencia visual.
+*   **[🎣 Actividad 1.4: Desacoplamiento de Lógica](./docs/ACTIVIDAD_1_4.md)**: Primeros pasos moviendo estado complejo a hooks locales.
+*   [🔍 Auditoría de Calidad Día 1](./docs/AUDITORIA_DIA_1.md)
+
+### 📅 Día 2: Custom Hooks Profesionales
+Enfocado en la creación de herramientas de nivel Senior para gestionar efectos y estados complejos.
+
+*   **[🎣 Actividad 2: Implementación de Hooks Genéricos](./docs/ACTIVIDAD_2.md)**:
+    *   **`useFetch`**: Manejo de peticiones con `AbortController` y estados de error/carga.
+    *   **`useForm`**: Gestión de inputs con validación en tiempo real y soporte para reseteo.
+    *   **`useToggle`**: Utilidad profesional para control de booleanos.
+*   [🧪 Auditoría de Lógica Día 2](./docs/AUDITORIA_DIA_2.md)
+
+---
+
+## 📊 Tabla de Estructura de Proyecto
+
+| Directorio | Propósito | Regla de Oro |
+| :--- | :--- | :--- |
+| `src/components/` | Componentes visuales puros. | Prohibido hacer `fetch` o lógica de negocio. |
+| `src/hooks/` | Cerebro de la aplicación. | Único lugar permitido para gestionar estados complejos. |
+| `src/services/` | Puerta al mundo exterior. | Debe ser independiente de la UI (agnóstico de React). |
+| `src/utils/` | Herramientas comunes. | Solo funciones puras (entrada -> salida). |
+
+---
+
+## 🔄 Flujo de Datos Profesional
+
+```mermaid
+sequenceDiagram
+    participant UI as Componente React
+    participant Hook as Custom Hook
+    participant Service as Servidor Mock / API
+    
+    UI->>Hook: Solicita acción (ej: loadData)
+    Hook->>Hook: Activa estado 'Loading'
+    Hook->>Service: Llama función asíncrona
+    Service-->>Hook: Devuelve Datos o Error (HTTP Status)
+    Hook->>Hook: Actualiza Data y apaga 'Loading'
+    Hook-->>UI: Refleja nuevos datos en pantalla
+```
+
+---
+
+*Proyecto desarrollado como parte del curso de Especialización en React Profesional.*
