@@ -9,60 +9,90 @@ Ecosistema empresarial sistemático diseñado para **APM Enterprise**. Esta plat
 
 ---
 
-## 🚀 Características de Ingeniería Superior
+## 🏗️ Ingeniería de Capas Profesionales
 
-### 🛡️ Arquitectura Robusta
-- **Desacoplamiento Total**: Separación del 100% entre la Interfaz de Usuario (UI), la Lógica (Hooks) y los Servicios de Datos.
-- **Infraestructura de Mock Enterprise**: Simulación de servidor HTTP real con códigos de estado estandarizados.
-- **Hooks Predictivos**: Lógica modular que gestiona `AbortControllers`, validación en tiempo real y sincronización atómica.
+Para asegurar la calidad empresarial, el sistema está dividido en 4 capas de responsabilidad única:
 
-### 🎨 Experiencia Premium (Edición Elite)
-- **Sidebar de Alta Fidelidad**: Transiciones fluidas de 300ms con tooltips de diseño premium y controles simétricos de 24px.
-- **Inteligencia Interactiva**:
-    - **Deselección Inteligente**: Protocolo de doble clic para una gestión de proyectos ágil.
-    - **Sincronización No-Bloqueante**: Refresco de datos de alto rendimiento sin parpadeos en la interfaz.
-    - **Integridad Plus**: Conciliación avanzada de registros que evita duplicidades en ediciones de alta frecuencia.
+```mermaid
+graph TD
+    subgraph UI_Layer["🎨 Capa de Presentación (UI)"]
+        Components["src/components/ (Botones, Inputs, Cards)"]
+        Pages["src/pages/ (Layouts de Dashboard)"]
+    end
 
----
+    subgraph Logic_Layer["🧠 Capa de Lógica (Hooks)"]
+        PHooks["src/hooks/ (useFetch, useForm, useToggle)"]
+        BHooks["src/hooks/ (useDashboard, useProjectForm)"]
+    end
 
-## 🏗️ Mapa Estructural
+    subgraph Service_Layer["📡 Capa de Servicios (API)"]
+        HTTPClient["src/services/httpClient.js (Base Cliente)"]
+        APIService["src/services/api.js (Endpoints)"]
+        MockServer["src/services/mockServer.js (Interceptor)"]
+    end
 
-| Componente | Responsabilidad | Regla de Oro |
-| :--- | :--- | :--- |
-| **🎨 Presentación** | UI Atómica y Layouts | Prohibida la lógica de negocio. |
-| **🧠 Inteligencia** | Custom Hooks Especializados | Gestión de estado atómico y efectos. |
-| **📡 Conectividad** | Cliente HTTP y Servicios API | Agnóstico del framework visual. |
-| **🛠️ Utilidades** | Formateadores y Constantes | Funciones puras Entrada -> Salida. |
+    subgraph Utils_Layer["🛠️ Capa de Utilidades"]
+        Fmt["src/utils/formatters.js (Dinero, Fechas)"]
+    end
 
----
-
-## 📈 Bitácora de Evolución de Ingeniería
-
-### 📅 Hito 1: Cimientos Estructurales
-- Refactorización total en capas especializadas.
-- Implementación del **Sistema de Diseño Interno**.
-- Centralización de la conectividad API.
-- **[Detalle Actividades Día 1](./docs/AUDITORIA_DIA_1.md)**
-
-### 📅 Hito 2: Capa de Hooks Senior
-- Implementación de `useFetch` genérico (señales de aborto).
-- `useForm` avanzado con propagación de errores en tiempo real.
-- Sincronización de estado global.
-- **[Detalle Actividades Día 2](./docs/AUDITORIA_DIA_2.md)**
-
-### 📅 Hito 3: Pulido Premium e Integridad Final
-- **Upgrade UX Premium**: Tooltips refinados y simetría en el sidebar.
-- **Excelencia Operatividad**: Deselección inteligente y corrección de bugs de reconciliación de listas.
-- **Listo para Despliegue**: Código 100% libre de comentarios, optimizado para producción.
-- **[Detalle Actividades Día 3](./docs/AUDITORIA_DIA_3.md)**
+    UI_Layer --> Logic_Layer
+    Logic_Layer --> Service_Layer
+    Logic_Layer --> Utils_Layer
+```
 
 ---
 
-## 🛠️ Stack Tecnológico y Estándares
-- **Runtime**: React 18+ / Vite
-- **Estilo**: CSS Vanilla con Tokens Empresariales
-- **Iconografía**: Lucide 
-- **Estándares**: Política de Zero-Comments, Código DRY, Principios SOLID.
+## 🔄 Flujo de Datos Profesional
+
+El sistema implementa un ciclo de vida de datos asíncrono y controlado:
+
+```mermaid
+sequenceDiagram
+    participant UI as Componente React
+    participant Hook as Custom Hook
+    participant Service as Servidor Mock / API
+    
+    UI->>Hook: Solicita acción (ej: loadData)
+    Hook->>Hook: Activa estado 'Loading' (No bloqueante)
+    Hook->>Service: Llama función asíncrona
+    Service-->>Hook: Devuelve Datos o Error (Status 200/400)
+    Hook->>Hook: Reconcilia ID e ID (Evita duplicados)
+    Hook-->>UI: Refleja nuevos datos en pantalla
+```
+
+---
+
+## 📈 Bitácora de Ingeniería (Castro y Saravia)
+
+### 📅 Fase 1: Estructura y Modularización
+Enfoque en la creación del sistema de diseño y aislamiento de servicios.
+- 📦 Modularización de la UI Atómica.
+- 📡 Aislamiento de Servicios (API agnóstica).
+- 🛠️ Abstracción de Utilidades Globales.
+- **[Consultar Documentación Fase 1](./docs/FASE_1_ESTRUCTURA.md)**
+
+### 📅 Fase 2: Lógica Senior y Hooks
+Implementación de herramientas de control de estado y efectos a nivel Senior.
+- 🎣 `useFetch` con AbortControllers.
+- 📋 `useForm` con validación real-time.
+- 🔄 `useToggle` profesional.
+- **[Consultar Documentación Fase 2](./docs/FASE_2_LOGICA.md)**
+
+### 📅 Fase 3: Refinamiento Premium e Integridad
+Fase final de pulido estético y corrección de integridad operativa.
+- 🎨 Tooltips Premium y Simetría de Sidebar.
+- ⚡ Deselección por Doble Clic y Refresco No-Bloqueante.
+- 🛡️ Solución definitiva al Bug de Duplicación.
+- **[Consultar Documentación Fase 3](./docs/FASE_3_PREMIUM.md)**
+
+---
+
+## 🛠️ Stack Tecnológico
+- **Frontend**: React 18 / Vite / Lucide Icons
+- **Estado/Lógica**: Custom Hooks (Clean Code Patterns)
+- **Network**: Cliente HTTP centralizado (Axios Pattern)
+- **Estilo**: CSS Vanilla / Enterprise Tokens / Animaciones Premium
+- **Documentación**: Mermaid Diagrams / Markdown Elite
 
 --- 
 
