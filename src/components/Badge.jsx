@@ -1,24 +1,24 @@
-import React from 'react';
+import React from "react";
+import { cn } from "../utils/cn";
 
-export function Badge({ children, tone = "neutral" }) {
-    const bg = tone === "success" ? "#e7f7ee" : tone === "warn" ? "#fff3e0" : tone === "danger" ? "#ffe7e7" : "#eef2ff";
-    const fg = tone === "success" ? "#127a43" : tone === "warn" ? "#a05a00" : tone === "danger" ? "#a11a1a" : "#233876";
+export function Badge({ children, variant = "neutral", className }) {
+    const variants = {
+        success: "bg-green-100 text-green-700 border-green-200",
+        warn: "bg-amber-100 text-amber-700 border-amber-200",
+        danger: "bg-red-100 text-red-700 border-red-200",
+        neutral: "bg-slate-100 text-slate-600 border-slate-200",
+        primary: "bg-primary/10 text-primary border-primary/20",
+    };
 
     return (
-        <span
-            style={{
-                padding: "3px 8px",
-                borderRadius: 999,
-                background: bg,
-                color: fg,
-                fontSize: 12,
-                fontWeight: 600,
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-            }}
-        >
-            <span style={{ width: 6, height: 6, borderRadius: 999, background: fg, display: "inline-block" }} />
+        <span className={cn(
+            "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-bold transition-all",
+            variants[variant],
+            className
+        )}>
+            <span className={cn(
+                "h-1.5 w-1.5 rounded-full bg-current opacity-80",
+            )} />
             {children}
         </span>
     );

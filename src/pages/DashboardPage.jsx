@@ -1,244 +1,286 @@
 import React from "react";
+import {
+    Users,
+    DollarSign,
+    TrendingUp,
+    Plus,
+    Filter,
+    Search as SearchIcon,
+    ChevronRight,
+    RefreshCw,
+    LogOut,
+    LayoutDashboard
+} from "lucide-react";
 import { useDashboard } from "../hooks/useDashboard";
 import { useProjectForm } from "../hooks/useProjectForm";
 import { StatCard } from "../components/StatCard";
 import { Badge } from "../components/Badge";
 import { Button } from "../components/Button";
 import { TextField } from "../components/TextField";
+import { Card } from "../components/Card";
+import { Layout } from "../components/Layout";
+import { Select } from "../components/Select";
 import { money } from "../utils/formatters";
+import { cn } from "../utils/cn";
 
 export default function DashboardPage() {
     const dash = useDashboard();
     const form = useProjectForm(
         dash.token,
-        (newProject) => {
-            dash.setData((prev) => ({
-                ...prev,
-                projects: [newProject, ...(prev?.projects || [])],
-            }));
+        (project) => {
+            dash.setData((prev) => {
+                if (!prev) return prev;
+                const exists = prev.projects?.some(p => p.id === project.id);
+                return {
+                    ...prev,
+                    projects: exists
+                        ? prev.projects.map(p => p.id === project.id ? project : p)
+                        : [project, ...(prev.projects || [])]
+                };
+            });
         },
         dash.setSelectedId
     );
 
-    const styles = {
-        page: { maxWidth: 1400, margin: "0 auto", padding: 20, fontFamily: "system-ui, sans-serif" },
-        header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32, paddingBottom: 16, borderBottom: "1px solid #e2e8f0" },
-        main: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 },
-        sectionTitle: { fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em" },
-        smallInput: { padding: "8px 12px", borderRadius: 10, border: "1px solid #d9d9e3", fontSize: 14, outline: "none" },
-        notice: { padding: 20, textAlign: "center", background: "#f8fafd", borderRadius: 12, color: "#64748b", fontSize: 14 },
-    };
+    if (!dash.token) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-background px-4">
+                <Card className="w-full max-w-md p-10 text-center shadow-2xl shadow-primary/10 border-none relative overflow-hidden ring-1 ring-primary/5">
+                    <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-primary/5 inca-pattern" />
+                    <div className="mb-8 flex justify-center">
+                        <img src="/apm.png" alt="APM Logo" className="h-24 w-auto drop-shadow-xl" />
+                    </div>
+                    <h2 className="text-2xl font-black tracking-tight text-obsidian uppercase">Acceso Enterprise</h2>
+                    <p className="mt-2 text-xs font-bold uppercase tracking-widest text-primary/60 italic">Design System v2.0</p>
+
+                    <form onSubmit={dash.onLogin} className="mt-8 space-y-4 text-left">
+                        <TextField
+                            label="Correo Electrónico"
+                            value={dash.email}
+                            onChange={dash.setEmail}
+                            placeholder="usuario@apm.com"
+                        />
+                        <TextField
+                            label="Contraseña"
+                            type="password"
+                            value={dash.pass}
+                            onChange={dash.setPass}
+                            placeholder="••••••••"
+                        />
+                        <Button type="submit" className="w-full uppercase tracking-widest py-4 mt-6">
+                            Ingresar al Sistema
+                        </Button>
+                    </form>
+
+                    <div className="mt-6 text-xs text-muted-foreground/60 italic">
+                        Dashboard Management v1.0 • APM Professional
+                    </div>
+                </Card>
+            </div>
+        );
+    }
 
     return (
-        <div style={styles.page}>
-            <header style={styles.header}>
-                <div style={{ display: "grid", gap: 4 }}>
-                    <div style={{ fontSize: 18, fontWeight: 900 }}>Mini Dashboard</div>
-                    <div style={{ fontSize: 12, opacity: 0.75 }}>Arquitectura profesional y escalable para APM Enterprise.</div>
+        <Layout user={dash.data?.me}>
+            <div className="space-y-8 animate-in fade-in duration-700">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-black tracking-tight text-obsidian">Panel de Control</h1>
+                        <p className="text-muted-foreground">Bienvenido al ecosistema APM, {dash.data?.me?.name}</p>
+                    </div>
+                    <div className="flex gap-3">
+                        <Button variant="secondary" icon={<RefreshCw size={18} />} onClick={() => {
+                            dash.load();
+                            dash.setSelectedId(null);
+                            form.cancelEdit();
+                        }} disabled={dash.loading}>
+                            Actualizar
+                        </Button>
+                    </div>
                 </div>
-                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                    {dash.token ? (
-                        <>
-                            <span style={{ fontSize: 13, opacity: 0.8 }}>
-                                Sesión: <b>{dash.data?.me?.name || "..."}</b>
-                            </span>
-                            <Button variant="ghost" onClick={dash.load} disabled={dash.loading}>
-                                Recargar
-                            </Button>
-                            <Button variant="danger" onClick={dash.onLogout}>
-                                Logout
-                            </Button>
-                        </>
-                    ) : (
-                        <form onSubmit={dash.onLogin} style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                            <input
-                                value={dash.email}
-                                onChange={(e) => dash.setEmail(e.target.value)}
-                                placeholder="email"
-                                style={styles.smallInput}
-                            />
-                            <input
-                                value={dash.pass}
-                                onChange={(e) => dash.setPass(e.target.value)}
-                                placeholder="password"
-                                type="password"
-                                style={styles.smallInput}
-                            />
-                            <Button type="submit">Login</Button>
-                        </form>
-                    )}
-                </div>
-            </header>
 
-            <main style={styles.main}>
-                <section style={{ display: "grid", gap: 20 }}>
-                    <div style={styles.sectionTitle}>Resumen</div>
+                <section className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <StatCard
+                        title="Ingresos Totales"
+                        value={dash.data ? money(dash.data.stats.revenue) : "$0.00"}
+                        hint="Mensual"
+                        icon={<DollarSign size={24} />}
+                    />
+                    <StatCard
+                        title="Nuevos Usuarios"
+                        value={dash.data ? String(dash.data.stats.newUsers) : "0"}
+                        hint="Últimos 7 días"
+                        icon={<Users size={24} />}
+                    />
+                    <StatCard
+                        title="Tasa de Abandono"
+                        value={dash.data ? `${Math.round(dash.data.stats.churn * 100)}%` : "0%"}
+                        hint="Retención"
+                        icon={<TrendingUp size={24} />}
+                    />
+                </section>
 
-                    {dash.loading ? (
-                        <div style={styles.notice}>Cargando dashboard empresarial…</div>
-                    ) : dash.err ? (
-                        <div style={{ background: "#ffe7e7", color: "#a11a1a", padding: 20, borderRadius: 16, border: "1px solid #ffd0d0" }}>
-                            <div style={{ fontWeight: 800, marginBottom: 4 }}>Error de API ({dash.err.status || "Network"})</div>
-                            <div style={{ fontSize: 13 }}>{dash.err.message}</div>
-                            <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-                                <Button onClick={dash.load}>Reintentar conexión</Button>
-                                <Button variant="ghost" onClick={() => dash.setErr(null)}>Cerrar</Button>
-                            </div>
-                        </div>
-                    ) : dash.data ? (
-                        <>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
-                                <StatCard title="Revenue" value={money(dash.data.stats.revenue)} hint="Mensual (simulado)" />
-                                <StatCard title="Nuevos usuarios" value={String(dash.data.stats.newUsers)} hint="Últimos 7 días" />
-                                <StatCard title="Churn" value={`${Math.round(dash.data.stats.churn * 100)}%`} hint="Mensual (simulado)" />
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+                    <div className="lg:col-span-8 space-y-8">
+                        <Card className="p-0 border-none shadow-xl bg-white ring-1 ring-muted/20">
+                            <div className="flex items-center justify-between border-b border-muted/10 bg-muted/5 p-8 relative text-xs">
+                                <h2 className="flex items-center gap-3 text-xl font-black tracking-tight text-obsidian">
+                                    <div className="h-8 w-1.5 rounded-full bg-primary" />
+                                    Listado de Proyectos
+                                </h2>
+                                <div className="flex items-center gap-3">
+                                    <Select
+                                        value={dash.statusFilter}
+                                        onChange={dash.setStatusFilter}
+                                        options={[
+                                            { value: "all", label: "Todos" },
+                                            { value: "active", label: "Activo" },
+                                            { value: "paused", label: "Pausado" },
+                                        ]}
+                                        className="w-40"
+                                    />
+                                </div>
                             </div>
 
-                            <div style={{ height: 16 }} />
-
-                            <div style={styles.sectionTitle}>Crear proyecto</div>
-                            <form
-                                onSubmit={form.onCreate}
-                                style={{ display: "grid", gap: 16, background: "#f8fafd", padding: 20, borderRadius: 16, border: "1px solid #e2e8f0" }}
-                            >
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                                    <TextField label="Nombre" value={form.name} onChange={form.setName} placeholder="Ej: Proyecto APM" error={form.nameErr} />
-                                    <TextField label="Owner" value={form.owner} onChange={form.setOwner} placeholder="Ej: Equipo Backend" error={form.ownerErr} />
-                                </div>
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                                    <TextField label="Budget (PEN)" value={form.budget} onChange={form.setBudget} placeholder="0" error={form.budgetErr} />
-                                    <label style={{ display: "grid", gap: 6 }}>
-                                        <span style={{ fontSize: 12, fontWeight: 700 }}>Status</span>
-                                        <select
-                                            value={form.status}
-                                            onChange={(e) => form.setStatus(e.target.value)}
-                                            style={{ padding: "10px 12px", borderRadius: 10, border: "1px solid #d9d9e3", fontSize: 14 }}
-                                        >
-                                            <option value="active">active</option>
-                                            <option value="paused">paused</option>
-                                        </select>
-                                    </label>
-                                </div>
-                                {form.formErr ? (
-                                    <div style={{ background: "#ffe7e7", color: "#a11a1a", padding: "8px 12px", borderRadius: 10, fontSize: 13 }}>
-                                        {form.formErr}
+                            <div className="p-2">
+                                {dash.loading && !dash.data ? (
+                                    <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+                                        <RefreshCw size={32} className="animate-spin text-primary/40 mb-4" />
+                                        <p className="text-sm font-medium">Sincronizando base de datos...</p>
                                     </div>
-                                ) : null}
-                                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                                    <Button disabled={form.saving}>{form.saving ? "Guardando..." : "Crear"}</Button>
-                                    <span style={{ fontSize: 12, opacity: 0.75 }}>
-                                        Reglas: nombre ≥ 3, owner requerido, budget numérico.
-                                    </span>
+                                ) : dash.filteredProjects.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-20 text-muted-foreground text-center px-4">
+                                        <div className="h-20 w-20 rounded-full bg-muted/20 flex items-center justify-center mb-4">
+                                            <SearchIcon size={32} className="opacity-20" />
+                                        </div>
+                                        <p className="font-bold text-obsidian">No se encontraron proyectos</p>
+                                        <p className="text-xs">Ajusta los filtros para ver más resultados</p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 gap-1">
+                                        {dash.filteredProjects.map((p) => {
+                                            const isActive = p.id === dash.selectedId;
+                                            return (
+                                                <button
+                                                    key={p.id}
+                                                    onClick={() => dash.setSelectedId(p.id)}
+                                                    onDoubleClick={() => dash.setSelectedId(null)}
+                                                    className={cn(
+                                                        "group flex items-center justify-between rounded-2xl p-5 transition-all duration-300",
+                                                        isActive
+                                                            ? "bg-primary/10 text-primary ring-1 ring-primary/20 shadow-md translate-x-1"
+                                                            : "hover:bg-primary/5 hover:translate-x-1"
+                                                    )}
+                                                >
+                                                    <div className="flex flex-col text-left">
+                                                        <span className={cn("text-xs font-bold uppercase tracking-widest opacity-60", isActive ? "text-primary" : "text-muted-foreground")}>
+                                                            {p.owner}
+                                                        </span>
+                                                        <span className="text-lg font-black tracking-tight">{p.name}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-4">
+                                                        <Badge variant={p.status === "active" ? "success" : "warn"}>
+                                                            {p.status === "active" ? "Activo" : "Pausado"}
+                                                        </Badge>
+                                                        <ChevronRight size={18} className={cn("transition-transform text-primary/40", isActive ? "translate-x-1 text-primary" : "opacity-0 group-hover:opacity-100 group-hover:translate-x-1")} />
+                                                    </div>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        </Card>
+
+                        <Card className="bg-primary/5 border-dashed border-2 border-primary/20 transition-all hover:bg-primary/[0.08] relative mb-12 group">
+                            <div className="flex items-center justify-between mb-8">
+                                <h2 className="flex items-center gap-2 font-black tracking-tight text-primary text-lg">
+                                    <Plus size={16} />
+                                    {form.editingId ? "Editar Proyecto" : "Nuevo Registro de Proyecto"}
+                                </h2>
+                                {form.editingId && (
+                                    <Button variant="ghost" size="sm" onClick={form.cancelEdit} className="text-[10px] uppercase tracking-widest text-primary hover:bg-primary/5">
+                                        Cancelar Edición
+                                    </Button>
+                                )}
+                            </div>
+                            <form onSubmit={form.onAction} className="space-y-8 relative z-10">
+                                <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                                    <TextField label="Nombre del Proyecto" value={form.name} onChange={form.setName} placeholder="Ej: Rediseño APM" error={form.nameErr} />
+                                    <TextField label="Responsable" value={form.owner} onChange={form.setOwner} placeholder="Ej: Arq. Carlos" error={form.ownerErr} />
+                                </div>
+                                <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                                    <TextField label="Presupuesto Inicial (PEN)" value={form.budget} onChange={form.setBudget} placeholder="0" error={form.budgetErr} />
+                                    <Select
+                                        label="Estado"
+                                        value={form.status}
+                                        onChange={form.setStatus}
+                                        options={[
+                                            { value: "active", label: "Activo" },
+                                            { value: "paused", label: "En Pausa" },
+                                        ]}
+                                    />
+                                </div>
+                                {form.formErr && (
+                                    <Badge variant="danger" className="w-full justify-center py-3 rounded-2xl animate-shake">
+                                        {form.formErr}
+                                    </Badge>
+                                )}
+                                <div className="flex justify-end pt-4">
+                                    <Button disabled={form.saving} className="min-w-[200px] py-4 rounded-full shadow-2xl shadow-primary/30">
+                                        {form.saving ? "Procesando..." : (form.editingId ? "Guardar Cambios" : "Generar Proyecto")}
+                                    </Button>
                                 </div>
                             </form>
-                        </>
-                    ) : (
-                        <div style={styles.notice}>Inicia sesión para ver el dashboard.</div>
-                    )}
-                </section>
-
-                <section style={{ display: "grid", gap: 20, alignContent: "start" }}>
-                    <div style={{ display: "flex", alignItems: "end", justifyContent: "space-between", gap: 12 }}>
-                        <div style={styles.sectionTitle}>Proyectos</div>
-                        <div style={{ display: "flex", gap: 8 }}>
-                            <input
-                                value={dash.q}
-                                onChange={(e) => dash.setQ(e.target.value)}
-                                placeholder="Buscar..."
-                                style={styles.smallInput}
-                            />
-                            <select
-                                value={dash.statusFilter}
-                                onChange={(e) => dash.setStatusFilter(e.target.value)}
-                                style={{ ...styles.smallInput, width: 140 }}
-                            >
-                                <option value="all">Todos</option>
-                                <option value="active">Activos</option>
-                                <option value="paused">Pausados</option>
-                            </select>
-                        </div>
+                        </Card>
                     </div>
 
-                    {!dash.token ? (
-                        <div style={styles.notice}>Sin token. Haz login arriba.</div>
-                    ) : dash.loading ? (
-                        <div style={styles.notice}>Cargando lista empresarial...</div>
-                    ) : (
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, alignItems: "start" }}>
-                            <div style={{ display: "grid", gap: 8 }}>
-                                {dash.filteredProjects.length === 0 ? (
-                                    <div style={{ padding: 40, textAlign: "center", color: "#94a3b8", background: "#f8fafd", borderRadius: 16, border: "2px dashed #e2e8f0" }}>
-                                        <div style={{ fontSize: 24, marginBottom: 8 }}>📁</div>
-                                        Sin resultados.
+                    <div className="lg:col-span-4 max-lg:order-first">
+                        {dash.selected ? (
+                            <Card variant="glass" className="sticky top-28 space-y-8 animate-in zoom-in-95 duration-500">
+                                <div className="flex items-start justify-between">
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Detalle Técnico</span>
+                                        <h2 className="text-2xl font-black tracking-tight text-obsidian">{dash.selected.name}</h2>
                                     </div>
-                                ) : (
-                                    dash.filteredProjects.map((p) => {
-                                        const active = p.id === dash.selectedId;
-                                        const tone = p.status === "active" ? "success" : "warn";
-                                        return (
-                                            <button
-                                                key={p.id}
-                                                onClick={() => dash.setSelectedId(p.id)}
-                                                style={{
-                                                    textAlign: "left", width: "100%", border: active ? "2px solid #3b5bff" : "1px solid #e2e8f0",
-                                                    background: "#fff", borderRadius: 12, padding: 16, cursor: "pointer",
-                                                    boxShadow: active ? "0 10px 30px rgba(59,91,255,0.12)" : "none"
-                                                }}
-                                            >
-                                                <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
-                                                    <div style={{ fontWeight: 900, fontSize: 13 }}>{p.name}</div>
-                                                    <Badge tone={tone}>{p.status}</Badge>
-                                                </div>
-                                                <div style={{ marginTop: 8, fontSize: 12, opacity: 0.8 }}>
-                                                    Owner: <b>{p.owner}</b> · Budget: <b>{money(p.budget)}</b>
-                                                </div>
-                                            </button>
-                                        );
-                                    })
-                                )}
-                            </div>
+                                    <div className="flex gap-2">
+                                        <Button variant="outline" size="sm" onClick={() => form.prepareEdit(dash.selected)}>
+                                            Editar
+                                        </Button>
+                                    </div>
+                                </div>
 
-                            <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 16, padding: 24, minHeight: 200, position: "sticky", top: 20 }}>
-                                {!dash.selected ? (
-                                    <div style={{ textAlign: "center", color: "#94a3b8", marginTop: 40 }}>
-                                        Selecciona un proyecto para ver detalles.
-                                    </div>
-                                ) : (
-                                    <>
-                                        <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}>
-                                            <div style={{ display: "grid", gap: 4 }}>
-                                                <div style={{ fontSize: 16, fontWeight: 900 }}>{dash.selected.name}</div>
-                                                <div style={{ fontSize: 12, opacity: 0.75 }}>ID: {dash.selected.id}</div>
-                                            </div>
-                                            <Button variant="ghost" onClick={() => dash.onToggleStatus(dash.selected.id)}>
-                                                Toggle status
-                                            </Button>
-                                        </div>
-                                        <div style={{ height: 12 }} />
-                                        <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid #f1f5f9" }}>
-                                            <div style={{ fontSize: 12, color: "#64748b" }}>Owner</div>
-                                            <div style={{ fontSize: 13, fontWeight: 600 }}>{dash.selected.owner}</div>
-                                        </div>
-                                        <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid #f1f5f9" }}>
-                                            <div style={{ fontSize: 12, color: "#64748b" }}>Status</div>
-                                            <Badge tone={dash.selected.status === "active" ? "success" : "warn"}>
-                                                {dash.selected.status}
-                                            </Badge>
-                                        </div>
-                                        <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 0" }}>
-                                            <div style={{ fontSize: 12, color: "#64748b" }}>Budget</div>
-                                            <div style={{ fontSize: 13, fontWeight: 600 }}>{money(dash.selected.budget)}</div>
-                                        </div>
-                                        <div style={{ height: 16 }} />
-                                        <div style={{ fontSize: 11, color: "#94a3b8", fontStyle: "italic", lineHeight: 1.4 }}>
-                                            Arquitectura profesional: lógica en hooks, comunicación centralizada.
-                                        </div>
-                                    </>
-                                )}
+                                <div className="space-y-4">
+                                    <DetailItem label="Responsable" value={dash.selected.owner} />
+                                    <DetailItem label="Estado Actual" value={<Badge variant={dash.selected.status === "active" ? "success" : "warn"}>{dash.selected.status === "active" ? "Activo" : "Pausado"}</Badge>} />
+                                    <DetailItem label="Presupuesto" value={money(dash.selected.budget)} className="text-primary font-black" />
+                                </div>
+
+                                <div className="rounded-2xl bg-primary/10 p-4 border border-primary/20">
+                                    <p className="text-[10px] font-bold text-primary italic leading-relaxed">
+                                        "La arquitectura de software no es sobre cómo se ve, sino sobre cómo resiste el cambio."
+                                        <br />— APM Enterprise Engineering
+                                    </p>
+                                </div>
+                            </Card>
+                        ) : (
+                            <div className="sticky top-28 rounded-3xl border-2 border-dashed border-muted/30 p-12 text-center text-muted-foreground flex flex-col items-center justify-center bg-white/40">
+                                <LayoutDashboard size={48} className="opacity-10 mb-4" />
+                                <p className="text-sm font-medium">Selecciona un proyecto para inspeccionar la arquitectura</p>
                             </div>
-                        </div>
-                    )}
-                </section>
-            </main>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </Layout>
+    );
+}
+
+function DetailItem({ label, value, className }) {
+    return (
+        <div className="flex items-center justify-between border-b border-muted/10 py-3 last:border-none">
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{label}</span>
+            <div className={cn("text-sm font-bold text-obsidian", className)}>{value}</div>
         </div>
     );
 }

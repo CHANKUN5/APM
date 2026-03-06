@@ -1,97 +1,69 @@
-# 🏢 APM Enterprise: Dashboard Management System
+# 🏢 APM Enterprise: Dashboard de Excelencia v3.5
 
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/TR/CSS/)
+![Leadership](https://img.shields.io/badge/Liderazgo-Castro_&_Saravia-gold?style=for-the-badge)
+![Engineering](https://img.shields.io/badge/Arquitectura-Capas_Profesionales-blue?style=for-the-badge)
+![UX](https://img.shields.io/badge/Experiencia-Premium_Interactive-success?style=for-the-badge)
 
-## 📝 Resumen del Proyecto
-Sistema de gestión empresarial de alto rendimiento diseñado para **APM Enterprise**. Este proyecto demuestra la transición de una aplicación legada hacia una **Arquitectura de Software Profesional**, priorizando la escalabilidad, el mantenimiento predictivo y el desacoplamiento total de responsabilidades.
-
----
-
-## 🏗️ Arquitectura de Capas Profesionales
-
-Para asegurar la calidad empresarial, el sistema está dividido en 4 capas de responsabilidad única:
-
-```mermaid
-graph TD
-    subgraph UI_Layer["🎨 Capa de Presentación (UI)"]
-        Components["src/components/ (Botones, Inputs, Cards)"]
-        Pages["src/pages/ (Layouts de Dashboard)"]
-    end
-
-    subgraph Logic_Layer["🧠 Capa de Lógica (Hooks)"]
-        PHooks["src/hooks/ (useFetch, useForm, useToggle)"]
-        BHooks["src/hooks/ (useDashboard, useProjectForm)"]
-    end
-
-    subgraph Service_Layer["📡 Capa de Servicios (API)"]
-        HTTPClient["src/services/httpClient.js (Base Cliente)"]
-        APIService["src/services/api.js (Endpoints)"]
-        MockServer["src/services/mockServer.js (Interceptor)"]
-    end
-
-    subgraph Utils_Layer["🛠️ Capa de Utilidades"]
-        Fmt["src/utils/formatters.js (Dinero, Fechas)"]
-    end
-
-    UI_Layer --> Logic_Layer
-    Logic_Layer --> Service_Layer
-    Logic_Layer --> Utils_Layer
-```
+## 💎 El Estándar de Oro en Gestión de Proyectos
+Ecosistema empresarial sistemático diseñado para **APM Enterprise**. Esta plataforma representa la cúspide de la **Ingeniería de Software Moderna**, priorizando el desacoplamiento de capas, el mantenimiento predictivo y una experiencia de usuario de élite.
 
 ---
 
-## 📈 Bitácora de Desarrollo Diaria
+## 🚀 Características de Ingeniería Superior
 
-### 📅 Día 1: Arquitectura y Refactorización Base
-Este día se centró en "limpiar la casa". El código desordenado fue fragmentado en sub-actividades de alta especialización:
+### 🛡️ Arquitectura Robusta
+- **Desacoplamiento Total**: Separación del 100% entre la Interfaz de Usuario (UI), la Lógica (Hooks) y los Servicios de Datos.
+- **Infraestructura de Mock Enterprise**: Simulación de servidor HTTP real con códigos de estado estandarizados.
+- **Hooks Predictivos**: Lógica modular que gestiona `AbortControllers`, validación en tiempo real y sincronización atómica.
 
-*   **[📦 Actividad 1.1: Modularización UI](./docs/ACTIVIDAD_1_1.md)**: Extracción de componentes atómicos para crear una librería de diseño interna.
-*   **[📡 Actividad 1.2: Aislamiento de Servicios](./docs/ACTIVIDAD_1_2.md)**: Centralización de llamadas a la API en una capa independiente.
-*   **[🛠️ Actividad 1.3: Abstracción Funcional](./docs/ACTIVIDAD_1_3.md)**: Creación de formateadores globales para consistencia visual.
-*   **[🎣 Actividad 1.4: Desacoplamiento de Lógica](./docs/ACTIVIDAD_1_4.md)**: Primeros pasos moviendo estado complejo a hooks locales.
-*   [🔍 Auditoría de Calidad Día 1](./docs/AUDITORIA_DIA_1.md)
-
-### 📅 Día 2: Custom Hooks Profesionales
-Enfocado en la creación de herramientas de nivel Senior para gestionar efectos y estados complejos.
-
-*   **[🎣 Actividad 2: Implementación de Hooks Genéricos](./docs/ACTIVIDAD_2.md)**:
-    *   **`useFetch`**: Manejo de peticiones con `AbortController` y estados de error/carga.
-    *   **`useForm`**: Gestión de inputs con validación en tiempo real y soporte para reseteo.
-    *   **`useToggle`**: Utilidad profesional para control de booleanos.
-*   [🧪 Auditoría de Lógica Día 2](./docs/AUDITORIA_DIA_2.md)
+### 🎨 Experiencia Premium (Edición Elite)
+- **Sidebar de Alta Fidelidad**: Transiciones fluidas de 300ms con tooltips de diseño premium y controles simétricos de 24px.
+- **Inteligencia Interactiva**:
+    - **Deselección Inteligente**: Protocolo de doble clic para una gestión de proyectos ágil.
+    - **Sincronización No-Bloqueante**: Refresco de datos de alto rendimiento sin parpadeos en la interfaz.
+    - **Integridad Plus**: Conciliación avanzada de registros que evita duplicidades en ediciones de alta frecuencia.
 
 ---
 
-## 📊 Tabla de Estructura de Proyecto
+## 🏗️ Mapa Estructural
 
-| Directorio | Propósito | Regla de Oro |
+| Componente | Responsabilidad | Regla de Oro |
 | :--- | :--- | :--- |
-| `src/components/` | Componentes visuales puros. | Prohibido hacer `fetch` o lógica de negocio. |
-| `src/hooks/` | Cerebro de la aplicación. | Único lugar permitido para gestionar estados complejos. |
-| `src/services/` | Puerta al mundo exterior. | Debe ser independiente de la UI (agnóstico de React). |
-| `src/utils/` | Herramientas comunes. | Solo funciones puras (entrada -> salida). |
+| **🎨 Presentación** | UI Atómica y Layouts | Prohibida la lógica de negocio. |
+| **🧠 Inteligencia** | Custom Hooks Especializados | Gestión de estado atómico y efectos. |
+| **📡 Conectividad** | Cliente HTTP y Servicios API | Agnóstico del framework visual. |
+| **🛠️ Utilidades** | Formateadores y Constantes | Funciones puras Entrada -> Salida. |
 
 ---
 
-## 🔄 Flujo de Datos Profesional
+## 📈 Bitácora de Evolución de Ingeniería
 
-```mermaid
-sequenceDiagram
-    participant UI as Componente React
-    participant Hook as Custom Hook
-    participant Service as Servidor Mock / API
-    
-    UI->>Hook: Solicita acción (ej: loadData)
-    Hook->>Hook: Activa estado 'Loading'
-    Hook->>Service: Llama función asíncrona
-    Service-->>Hook: Devuelve Datos o Error (HTTP Status)
-    Hook->>Hook: Actualiza Data y apaga 'Loading'
-    Hook-->>UI: Refleja nuevos datos en pantalla
-```
+### 📅 Hito 1: Cimientos Estructurales
+- Refactorización total en capas especializadas.
+- Implementación del **Sistema de Diseño Interno**.
+- Centralización de la conectividad API.
+- **[Detalle Actividades Día 1](./docs/AUDITORIA_DIA_1.md)**
+
+### 📅 Hito 2: Capa de Hooks Senior
+- Implementación de `useFetch` genérico (señales de aborto).
+- `useForm` avanzado con propagación de errores en tiempo real.
+- Sincronización de estado global.
+- **[Detalle Actividades Día 2](./docs/AUDITORIA_DIA_2.md)**
+
+### 📅 Hito 3: Pulido Premium e Integridad Final
+- **Upgrade UX Premium**: Tooltips refinados y simetría en el sidebar.
+- **Excelencia Operatividad**: Deselección inteligente y corrección de bugs de reconciliación de listas.
+- **Listo para Despliegue**: Código 100% libre de comentarios, optimizado para producción.
+- **[Detalle Actividades Día 3](./docs/AUDITORIA_DIA_3.md)**
 
 ---
 
-*Proyecto desarrollado como parte del curso de Especialización en React Profesional.*
+## 🛠️ Stack Tecnológico y Estándares
+- **Runtime**: React 18+ / Vite
+- **Estilo**: CSS Vanilla con Tokens Empresariales
+- **Iconografía**: Lucide 
+- **Estándares**: Política de Zero-Comments, Código DRY, Principios SOLID.
+
+--- 
+
+*Desarrollado con excelencia por el equipo de ingeniería **Castro y Saravia**.*

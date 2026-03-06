@@ -1,10 +1,5 @@
 import { httpClient } from "./httpClient";
 
-/**
- * API Service for APM Enterprise
- * All functions use the centralized httpClient.
- * Professional error handling is managed at the client level.
- */
 
 export async function apiGetDashboard({ token }) {
     return httpClient.get("/dashboard", {
@@ -20,6 +15,12 @@ export async function apiCreateProject({ token, payload }) {
 
 export async function apiToggleProjectStatus({ token, id }) {
     return httpClient.patch(`/projects/${id}/toggle`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+}
+
+export async function apiUpdateProject({ token, id, payload }) {
+    return httpClient.put(`/projects/${id}`, payload, {
         headers: { Authorization: `Bearer ${token}` }
     });
 }

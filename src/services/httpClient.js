@@ -1,9 +1,4 @@
-/**
- * Centralized HTTP Client for APM Enterprise
- * Handles baseURL, headers, and standard error responses.
- */
-
-const BASE_URL = "https://api.apm-enterprise.com/v1"; // Simulated base URL
+const BASE_URL = "https://api.apm-enterprise.com/v1";
 
 async function handleResponse(response) {
     if (!response.ok) {

@@ -1,4 +1,5 @@
-import { apiCreateProject } from "../services/api";
+import { useState } from "react";
+import { apiCreateProject, apiUpdateProject } from "../services/api";
 import { useForm } from "./useForm";
 
 export function useProjectForm(token, onProjectCreated, setSelectedId) {
@@ -16,29 +17,63 @@ export function useProjectForm(token, onProjectCreated, setSelectedId) {
         return errs;
     };
 
+    const [editingId, setEditingId] = useState(null);
+
     const {
         values,
         errors,
         isSubmitting: saving,
         onChange,
         onSubmit,
-        reset
+        reset,
+        setValues
     } = useForm({ name: "", owner: "", budget: "0", status: "active" }, validate);
 
-    const handleCreate = async (formValues) => {
-        const created = await apiCreateProject({
-            token,
-            payload: {
-                name: formValues.name,
-                owner: formValues.owner,
-                budget: Number(formValues.budget),
-                status: formValues.status
-            },
+    const prepareEdit = (project) => {
+        setEditingId(project.id);
+        setValues({
+            name: project.name,
+            owner: project.owner,
+            budget: String(project.budget),
+            status: project.status
         });
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    };
 
-        onProjectCreated(created);
-        setSelectedId(created.id);
+    const cancelEdit = () => {
+        setEditingId(null);
         reset();
+    };
+
+    const handleAction = async (formValues) => {
+        if (editingId) {
+            const updated = await apiUpdateProject({
+                token,
+                id: editingId,
+                payload: {
+                    name: formValues.name,
+                    owner: formValues.owner,
+                    budget: Number(formValues.budget),
+                    status: formValues.status
+                },
+            });
+            onProjectCreated(updated);
+            setEditingId(null);
+            reset();
+        } else {
+            const created = await apiCreateProject({
+                token,
+                payload: {
+                    name: formValues.name,
+                    owner: formValues.owner,
+                    budget: Number(formValues.budget),
+                    status: formValues.status
+                },
+            });
+            onProjectCreated(created);
+            setSelectedId(created.id);
+            reset();
+        }
     };
 
     return {
@@ -50,11 +85,14 @@ export function useProjectForm(token, onProjectCreated, setSelectedId) {
         setBudget: (val) => onChange("budget", val),
         status: values.status,
         setStatus: (val) => onChange("status", val),
+        editingId,
         saving,
         formErr: Object.values(errors).find(e => e !== null) || null,
         nameErr: errors.name,
         ownerErr: errors.owner,
         budgetErr: errors.budget,
-        onCreate: (e) => onSubmit(e, handleCreate),
+        onAction: (e) => onSubmit(e, handleAction),
+        prepareEdit,
+        cancelEdit,
     };
 }

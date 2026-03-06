@@ -32,21 +32,6 @@ export function useDashboard() {
         return data.projects.find((p) => p.id === selectedId) || null;
     }, [data, selectedId]);
 
-    async function onToggleStatus(id) {
-        try {
-            const updated = await apiToggleProjectStatus({ token, id });
-            setData((prev) => {
-                if (!prev) return prev;
-                return {
-                    ...prev,
-                    projects: prev.projects.map((p) => (p.id === updated.id ? updated : p)),
-                };
-            });
-        } catch (e) {
-            alert(`Error: ${e.status || ""} ${e.message || ""}`.trim());
-        }
-    }
-
     function onLogin(e) {
         e.preventDefault();
         if (!email.includes("@") || pass.length < 3) {
@@ -81,7 +66,6 @@ export function useDashboard() {
         filteredProjects,
         selected,
         load,
-        onToggleStatus,
         onLogin,
         onLogout,
     };
