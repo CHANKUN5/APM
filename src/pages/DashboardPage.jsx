@@ -83,6 +83,14 @@ export default function DashboardPage() {
     return (
         <Layout user={dash.data?.me}>
             <div className="space-y-8 animate-in fade-in duration-700">
+                {dash.err && (
+                    <div className="rounded-2xl bg-danger/10 border border-danger/20 p-4 animate-shake">
+                        <p className="text-xs font-bold text-danger uppercase tracking-widest flex items-center gap-2">
+                            <span className="h-2 w-2 rounded-full bg-danger animate-pulse" />
+                            Error del Sistema: {dash.err.message || "Error al consumir la API"} (Status: {dash.err.status || "404"})
+                        </p>
+                    </div>
+                )}
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-black tracking-tight text-obsidian">Panel de Control</h1>
@@ -241,7 +249,8 @@ export default function DashboardPage() {
                                 <div className="flex items-start justify-between">
                                     <div className="space-y-1">
                                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Detalle Técnico</span>
-                                        <h2 className="text-2xl font-black tracking-tight text-obsidian">{dash.selected.name}</h2>
+                                        <h2 className="text-2xl font-black tracking-tight text-obsidian leading-none">{dash.selected.name}</h2>
+                                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">ID: {dash.selected.id}</p>
                                     </div>
                                     <div className="flex gap-2">
                                         <Button variant="outline" size="sm" onClick={() => form.prepareEdit(dash.selected)}>
