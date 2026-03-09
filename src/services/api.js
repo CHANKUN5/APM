@@ -2,9 +2,11 @@ import { httpClient } from "./httpClient";
 
 
 export async function apiGetDashboard({ token }) {
-    return httpClient.get("/dashboard", {
+    const response = await httpClient.get("/dashboard", {
         headers: { Authorization: `Bearer ${token}` }
     });
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return response;
 }
 
 export async function apiCreateProject({ token, payload }) {

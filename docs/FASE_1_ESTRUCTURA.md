@@ -1,29 +1,55 @@
 # 🏗️ Fase 1: Arquitectura y Cimientos Estructurales
 
-## 🎯 Objetivo
-Transformar una aplicación monolítica en un ecosistema de software modular, escalable y profesional.
+## 🎯 Objetivo de la Fase
+Transformar una aplicación monolítica "Todo-en-Uno" en un ecosistema de software modular, escalable y profesional, eliminando el acoplamiento entre UI y datos.
 
-## 🛠️ Ingeniería de Componentes (Actividad 1.1)
-Se fragmentó la UI en componentes atómicos reutilizables:
-- **`StatCard`**: Tarjetas de indicadores con efectos de hover premium.
-- **`Badge`**: Etiquetas de estado con variantes de color dinámicas.
-- **`Button`**: Botones estandarizados con soporte para iconos y estados de carga.
-- **`TextField`**: Entradas de texto con validación integrada.
+## 🛠️ Ingeniería de Componentes Atómicos
+Se fragmentó la interfaz en componentes puros que no manejan lógica de negocio, solo renderizan propiedades:
 
-## 📡 Aislamiento de Servicios (Actividad 1.2)
-Se desacopló la comunicación de red mediante una capa dedicada en `src/services/`:
-- **Centralización**: Todas las llamadas a la API se gestionan desde `api.js`.
-- **Agnosticismo**: La UI no sabe si los datos vienen de un Mock o de un servidor real.
+```mermaid
+graph TD
+    subgraph "Capas de UI Atómica"
+        A[StatCard]
+        B[Card]
+        C[Badge]
+        D[Button]
+        E[TextField]
+    end
 
-## 🛠️ Abstracción de Utilidades (Actividad 1.3)
-Implementación de funciones puras para consistencia global:
-- **`money()`**: Formateo estándar de moneda PEN.
-- **`cn()`**: Utilidad para la gestión inteligente de clases CSS condicionales.
+    A --> F[DashboardPage]
+    B --> F
+    C --> G[UsersPage]
+    D --> G
+```
 
-## 🎣 Desacoplamiento de Lógica (Actividad 1.4)
-Extracción de la "inteligencia" de los componentes:
-- Creación de hooks de alto nivel como `useDashboard` y `useProjectForm`.
-- **JSX Limpio**: Los componentes de página se enfocan exclusivamente en la composición visual.
+## 📡 Aislamiento de Capas (Refactor)
+Se aplicó una **Arquitectura de Capas Verticales** para asegurar que el cambio en un servicio no afecte la presentación:
+
+```mermaid
+graph LR
+    subgraph "Presentación"
+        UI[Pages & JSX]
+    end
+
+    subgraph "Lógica de Aplicación"
+        H[useDashboard]
+        F[useProjectForm]
+    end
+
+    subgraph "Servicios Externos"
+        S[api.js]
+    end
+
+    UI --> H
+    UI --> F
+    H --> S
+    F --> S
+```
+
+### Hitos Logrados:
+1.  **Eliminación de Fetch en Pantalla**: Las páginas ya no saben cómo traer datos.
+2.  **Modularización**: Cada archivo tiene una única responsabilidad (SRP).
+3.  **UI Agnóstica**: Los componentes se pueden reutilizar en cualquier sección del sistema.
 
 ---
-[⬅️ Volver al Home](../README.md)
+[⬅️ Volver al Roadmap Principal](../README.md)

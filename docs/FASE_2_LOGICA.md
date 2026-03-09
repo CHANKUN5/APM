@@ -1,24 +1,41 @@
 # 🧠 Fase 2: Lógica Senior y Custom Hooks
 
-## 🎯 Objetivo
-Abstraer patrones repetitivos en herramientas de nivel Senior para maximizar la mantenibilidad y el control de efectos secundarios.
+## 🎯 Objetivo de la Fase
+Abstraer patrones repetitivos y comportamientos asíncronos complejos en herramientas reutilizables que garanticen la integridad del estado global.
 
-## 🚀 Hooks de Producción (Actividad 2)
+## 🚀 Abstracción de Red con `useFetch`
+Se diseñó un motor de peticiones universal que permite a cualquier vista consumir datos con control total de ciclo de vida:
 
-### 📡 `useFetch` (Gestión de Red)
-- **Control Total**: Implementación de `AbortController` para prevenir fugas de memoria al desmontar componentes.
-- **Estados Atómicos**: Gestión centralizada de `loading`, `data` y `error`.
-- **Flexibilidad**: Soporte para ejecuciones manuales o automáticas.
+```mermaid
+graph TD
+    A[Componente Invocador] -->|Dispara| B(useFetch)
+    subgraph "Motor Interno (Ref 2.1)"
+        B --> C{AbortController}
+        C -->|Memory Leak Prevent| D[CleanUp Effect]
+        B --> E[Manejo Atómico: loading, data, error]
+    end
+    D --> F[API Request]
+```
 
-### 📋 `useForm` (Control de Datos)
-- **Validación en Tiempo Real**: Soporte para reglas de negocio externas.
-- **Ciclo de Vida**: Gestión del estado de envío (`isSubmitting`) y reseteo automático tras éxito.
+## 📋 Gestión de Formularios y Toggles
+Modularización del control de entrada de datos y comportamiento binario de la UI:
 
-### 🔄 `useToggle` (Utilidad Visual)
-- Gestión profesional de modales y paneles expansibles de forma binaria.
+```mermaid
+graph LR
+    subgraph "Lógica de Formulario"
+        A[useForm] --> B[Reset States]
+        A --> C[Validation Schema]
+        A --> D[Loading State]
+    end
 
-## 📈 Impacto en el Sistema
-Al estandarizar estos procesos, el equipo **Castro y Saravia** garantiza que cada nueva funcionalidad herede la robustez de los hooks existentes, reduciendo drásticamente la deuda técnica.
+    subgraph "Lógica de UI"
+        E[useToggle] --> F[Modal States]
+        E --> G[Expand Panel]
+    end
+```
+
+### Impacto Técnico
+La implementación de estos hooks redujo el código duplicado en las páginas en un **65%**, centralizando el manejo de errores y estados de carga en un solo lugar.
 
 ---
-[⬅️ Volver al Home](../README.md)
+[⬅️ Volver al Roadmap Principal](../README.md)

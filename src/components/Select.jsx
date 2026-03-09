@@ -34,7 +34,7 @@ export function Select({ value, onChange, options, label, className }) {
                         isOpen && "ring-primary/30 shadow-md"
                     )}
                 >
-                    <span className="flex-1 text-center text-obsidian tracking-wide">
+                    <span className="text-obsidian tracking-wide">
                         {selectedOption.label}
                     </span>
                     <ChevronDown

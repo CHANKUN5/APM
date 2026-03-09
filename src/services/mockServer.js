@@ -1,4 +1,3 @@
-
 const fakeDb = {
     me: { id: "u1", name: "Wilber", role: "admin" },
     stats: { revenue: 18340, newUsers: 27, churn: 0.04 },
@@ -10,105 +9,99 @@ const fakeDb = {
     ],
 };
 
-function randomFail(prob = 0.15) {
-    return Math.random() < prob;
-}
-
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+window.SIMULATE_ERROR = null;
 
 const originalFetch = window.fetch;
 
 window.fetch = async (url, options = {}) => {
-    const { method, headers, body } = options;
-    const token = headers?.["Authorization"]?.split(" ")[1];
+    const isEnterpriseApi = url?.includes?.("api.apm-enterprise.com");
+    const isExternalAudit = url?.includes?.("jsonplaceholder");
+    const { method = "GET", headers, body } = options;
 
-    await sleep(600);
+    let authHeader;
+    if (headers instanceof Headers) {
+        authHeader = headers.get("Authorization") || headers.get("authorization");
+    } else {
+        authHeader = headers?.["Authorization"] || headers?.["authorization"];
+    }
+    const token = authHeader?.split(" ")[1];
 
-    if (!token || token !== "demo-token") {
-        return new Response(JSON.stringify({ message: "No autorizado" }), {
+    if (!isEnterpriseApi && !isExternalAudit) {
+        return Promise.resolve(
+            new Response(JSON.stringify({ success: true }), {
+                status: 200,
+                headers: { "Content-Type": "application/json" },
+            })
+        );
+    }
+
+    console.group(`📡 APM Network: ${method} ${url}`);
+
+    if (window.SIMULATE_ERROR) {
+        await sleep(500);
+        const errCode = window.SIMULATE_ERROR;
+        console.error(`🚨 Anomalía Detectada: ${errCode}`);
+        console.groupEnd();
+        return new Response(JSON.stringify({ error: true, status: errCode, message: "Falla de Auditoría del Sistema" }), {
+            status: errCode,
+            headers: { "Content-Type": "application/json" },
+        });
+    }
+
+    if (isEnterpriseApi && (!token || token !== "demo-token")) {
+        console.warn(`⚠️ Seguridad Enterprise: Token Inválido o Ausente (${token})`);
+        console.groupEnd();
+        return new Response(JSON.stringify({ error: "No autorizado" }), {
             status: 401,
             headers: { "Content-Type": "application/json" },
         });
     }
 
+    let response;
 
-    if (url.includes("/dashboard") && method === "GET") {
-        return new Response(
-            JSON.stringify({
-                me: fakeDb.me,
-                stats: fakeDb.stats,
-                projects: fakeDb.projects,
-            }),
-            { status: 200, headers: { "Content-Type": "application/json" } }
-        );
-    }
-
-
-    if (url.includes("/projects") && method === "POST") {
-        const payload = JSON.parse(body);
-        if (!payload?.name || payload.name.trim().length < 3) {
-            return new Response(JSON.stringify({ message: "Nombre inválido (mínimo 3 caracteres)" }), {
-                status: 400,
-                headers: { "Content-Type": "application/json" },
-            });
+    try {
+        if (url.includes("/dashboard") && method === "GET") {
+            const data = { me: fakeDb.me, stats: fakeDb.stats, projects: fakeDb.projects };
+            console.log("📦 Portafolio Sync:");
+            console.table(data.projects);
+            response = new Response(JSON.stringify(data), { status: 200, headers: { "Content-Type": "application/json" } });
+        } else if (url.includes("/projects") && method === "POST") {
+            const payload = JSON.parse(body);
+            const newItem = { id: "p" + Date.now(), ...payload, status: "active" };
+            fakeDb.projects = [newItem, ...fakeDb.projects];
+            console.log("✅ Activo Vinculado:");
+            console.table([newItem]);
+            response = new Response(JSON.stringify(newItem), { status: 201, headers: { "Content-Type": "application/json" } });
+        } else {
+            const realRes = await originalFetch(url, options);
+            if (isExternalAudit) {
+                const clone = realRes.clone();
+                try {
+                    const jsonData = await clone.json();
+                    console.log("📋 Auditoría Externa:");
+                    console.table(jsonData.slice(0, 5));
+                } catch (e) { }
+            }
+            console.groupEnd();
+            return realRes;
         }
-        const newItem = {
-            id: "p" + (fakeDb.projects.length + 1),
-            name: payload.name.trim(),
-            status: payload.status || "active",
-            owner: payload.owner,
-            budget: Number(payload.budget || 0),
-        };
-        fakeDb.projects = [newItem, ...fakeDb.projects];
-        return new Response(JSON.stringify(newItem), {
-            status: 201,
-            headers: { "Content-Type": "application/json" },
-        });
+    } catch (e) {
+        console.error("❌ Fallo Crítico en Interceptor:", e);
+        console.groupEnd();
+        return new Response(JSON.stringify({ error: true, message: "Error interno del servidor simulado" }), { status: 500 });
     }
 
+    console.groupEnd();
+    return response;
+};
 
-    if (url.includes("/projects/") && method === "PUT") {
-        const id = url.split("/").pop();
-        const payload = JSON.parse(body);
-        const idx = fakeDb.projects.findIndex((p) => p.id === id);
-        if (idx === -1) {
-            return new Response(JSON.stringify({ message: "Proyecto no encontrado" }), {
-                status: 404,
-                headers: { "Content-Type": "application/json" },
-            });
-        }
-        const updated = {
-            ...fakeDb.projects[idx],
-            name: payload.name.trim(),
-            owner: payload.owner,
-            budget: Number(payload.budget),
-            status: payload.status
-        };
-        fakeDb.projects[idx] = updated;
-        return new Response(JSON.stringify(updated), {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-        });
-    }
+window.setSimulatedError = (code) => {
+    window.SIMULATE_ERROR = code;
+    const msg = code ? `Inyección código ${code}` : "Restaurado Protocolo 200";
+    console.log(`🛠️ Control API: ${msg}`);
 
-
-    if (url.includes("/projects/") && method === "PATCH") {
-        const id = url.split("/")[url.split("/").length - 2];
-        const idx = fakeDb.projects.findIndex((p) => p.id === id);
-        if (idx === -1) {
-            return new Response(JSON.stringify({ message: "Proyecto no encontrado" }), {
-                status: 404,
-                headers: { "Content-Type": "application/json" },
-            });
-        }
-        const curr = fakeDb.projects[idx];
-        const next = { ...curr, status: curr.status === "active" ? "paused" : "active" };
-        fakeDb.projects[idx] = next;
-        return new Response(JSON.stringify(next), {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-        });
-    }
-
-    return originalFetch(url, options);
+    const event = new CustomEvent("apm:api_status", { detail: { code: code || 200, message: msg } });
+    window.dispatchEvent(event);
 };

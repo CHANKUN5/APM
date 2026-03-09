@@ -10,14 +10,17 @@ async function handleResponse(response) {
     return response.json();
 }
 
+const getHeaders = (extraHeaders = {}) => ({
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer demo-token',
+    ...extraHeaders,
+});
+
 export const httpClient = {
     async get(endpoint, options = {}) {
         const response = await fetch(`${BASE_URL}${endpoint}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers,
-            },
+            headers: getHeaders(options.headers),
         });
         return handleResponse(response);
     },
@@ -25,10 +28,7 @@ export const httpClient = {
     async post(endpoint, data, options = {}) {
         const response = await fetch(`${BASE_URL}${endpoint}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers,
-            },
+            headers: getHeaders(options.headers),
             body: JSON.stringify(data),
         });
         return handleResponse(response);
@@ -37,10 +37,7 @@ export const httpClient = {
     async put(endpoint, data, options = {}) {
         const response = await fetch(`${BASE_URL}${endpoint}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers,
-            },
+            headers: getHeaders(options.headers),
             body: JSON.stringify(data),
         });
         return handleResponse(response);
@@ -49,10 +46,7 @@ export const httpClient = {
     async patch(endpoint, data, options = {}) {
         const response = await fetch(`${BASE_URL}${endpoint}`, {
             method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers,
-            },
+            headers: getHeaders(options.headers),
             body: JSON.stringify(data),
         });
         return handleResponse(response);
@@ -61,11 +55,9 @@ export const httpClient = {
     async delete(endpoint, options = {}) {
         const response = await fetch(`${BASE_URL}${endpoint}`, {
             method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers,
-            },
+            headers: getHeaders(options.headers),
         });
         return handleResponse(response);
     }
 };
+

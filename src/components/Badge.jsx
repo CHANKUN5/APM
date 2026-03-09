@@ -4,7 +4,7 @@ import { cn } from "../utils/cn";
 export function Badge({ children, variant = "neutral", className }) {
     const variants = {
         success: "bg-green-100 text-green-700 border-green-200",
-        warn: "bg-amber-100 text-amber-700 border-amber-200",
+        warn: "bg-[#FFE88C]/50 text-[#CA732D] border-[#FFE88C]",
         danger: "bg-red-100 text-red-700 border-red-200",
         neutral: "bg-slate-100 text-slate-600 border-slate-200",
         primary: "bg-primary/10 text-primary border-primary/20",
